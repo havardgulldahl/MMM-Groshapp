@@ -1,0 +1,16 @@
+/* MMM-StorH styling */
+
+table.storh { width: 100%; border: 1px;}
+
+.storh .manu {
+	padding-right: 5px;
+}
+
+.storh .title {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.center {
+  text-align: center;
+}
