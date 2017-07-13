@@ -7,9 +7,8 @@
 var baseUrl = 'https://storhapi.skogdev.no/v1/';
 var accessToken = null;
 var groupId = null;
-var self = null;
 
-const performHttp = (requestUrl) => {
+var performHttp = function(requestUrl) {
 	return new Promise((resolve, reject) => {
 		var hr = new XMLHttpRequest();
 		hr.onreadystatechange = () => {
@@ -36,7 +35,7 @@ const performHttp = (requestUrl) => {
 	})
 }
 
-const authenticate = () => {
+var authenticate = function(config) {
 	return new Promise((resolve) => {
 		var hr = new XMLHttpRequest();
 		hr.open('POST', baseUrl + 'auth/login', true);
@@ -51,13 +50,13 @@ const authenticate = () => {
 				resolve(false)
 		}
 		hr.send(JSON.stringify({
-			email: self.config.email,
-			password: self.config.password
+			email: config.email,
+			password: config.password
 		}));
 	})
 }
 
-const getGroup = () => {
+var getGroup = function() {
 		var url = baseUrl + 'group/getgroups';
 		return getData(url)
 			.then((result) => {
@@ -70,7 +69,7 @@ const getGroup = () => {
 			});
 	}
 
-const getData = (url) => {
+var getData = function(url) {
 	return performHttp(url)
 		.then((response) => {
 			var parsedResponse = JSON.parse(response);
@@ -78,34 +77,28 @@ const getData = (url) => {
 		})
 }
 
-const startPolling = () => {
+var startPolling = function(self) {
 		var url = baseUrl + 'item/getitemsingroup?groupId=' + groupId + '&isShoppingList=true'
 		getData(url)
 			.then((result) => {
-				self.items = result.slice(0, self.config.maxItems);
-				self.updateDom(self.config.animationSpeed);
+				self.items = result.slice(0, this.config.maxItems);
+				self.updateDom(0);
 			})
 	}
 
-const tran = {
+var tran = {
 	MANUFACTURER: '',
 	ITEMNAME: '',
 	COUNT: '',
 	LOADING: ''
 }
 
-Module.register('mmm-storh', {
+Module.register('MMM-StorH', {
 	
-	// Default module config.
-	defaults: {
-		showHeader: false, 				// Set this to true to show header
-		maxItems: 10,					// Number of items to display (default is 10)
-		animationSpeed: 0,				// How fast the animation changes when updating mirror (default is 0 second)
-		fade: true,						// Set this to true to fade list from light to dark. (default is true)
-		fadePoint: 0.25,			    // Start on 1/4th of the list. 
-		items: []
+	defaults: {				
+		showHeader: true, 							
+		maxItems: 10,
 	},
-
 	getStyles: () => {
 		return ["storh.css"];
 	},
@@ -118,39 +111,38 @@ Module.register('mmm-storh', {
 	},
 
 	start: function () {
-		self = this;
-		self.items = [];
+		Log.log('starting');
+		console.log(this);
+		this.items = [];
 
-		Log.info('Starting module: ' + self.name);
-		var translator = window.Translator;
+		Log.info('Starting module: ' + this.name);
+		var translator = this.Translator;
 		
-		tran.MANUFACTURER = self.translate('MANUFACTURER');
-		tran.ITEMNAME = self.translate('ITEMNAME');
-		tran.COUNT = self.translate('COUNT');
-		tran.LOADING = self.translate('LOADING');
+		tran.MANUFACTURER = this.translate('MANUFACTURER');
+		tran.ITEMNAME = this.translate('ITEMNAME');
+		tran.COUNT = this.translate('COUNT');
+		tran.LOADING = this.translate('LOADING');
 		
-		
-
 		// Set locale and time format based on global config
 		Log.log('setting locale to', config.language);
 
 		// Setup
-		authenticate()
+		authenticate(this.config)
 			.then(() => getGroup())
-			.then(() => startPolling())
+			.then(() => startPolling(this))
 			.then(() => {
 				setInterval(() => {
-					startPolling();
+					startPolling(this);
 				}, 60000);
 			})
 			.catch((err) => {
 				throw new Error(err);
 			})
 	},
-	updateDomIfNeeded: () => {
-		self.updateDom(self.config.animationSpeed);
+	updateDomIfNeeded: function(self) {
+		self.updateDom(this.config.animationSpeed);
 	},
-	getTableHeaderRow: () => {
+	getTableHeaderRow: function() {
 		var thBrand = document.createElement('th');
 		thBrand.className = 'light';
 		thBrand.appendChild(document.createTextNode(tran.MANUFACTURER));
@@ -172,7 +164,7 @@ Module.register('mmm-storh', {
 		return thead;
 	},
 
-	getTableRow: (item) => {
+	getTableRow: function(item) {
 		var tdItemManu = document.createElement('td');
 		tdItemManu.className = 'manu';
 		var txtLine = document.createTextNode(item.itemManu);
@@ -194,27 +186,27 @@ Module.register('mmm-storh', {
 
 		return tr;
 	},
-	getDom: () => {
-		if (self.items.length > 0) {
+	getDom: function() {
+		if (this.items.length > 0) {
 
 			var table = document.createElement('table');
 			table.className = 'storh small';
 
-			if (self.config.showHeader) {
-				table.appendChild(self.getTableHeaderRow());
+			if (this.config.showHeader) {
+				table.appendChild(this.getTableHeaderRow());
 			}
 
-			for (var i = 0; i < self.items.length; i++) {
+			for (var i = 0; i < this.items.length; i++) {
 
-				var item = self.items[i];
-				var tr = self.getTableRow(item);
+				var item = this.items[i];
+				var tr = this.getTableRow(item);
 
-				if (self.config.fade && self.config.fadePoint < 1) {
-					if (self.config.fadePoint < 0) {
-						self.config.fadePoint = 0;
+				if (this.config.fade && this.config.fadePoint < 1) {
+					if (this.config.fadePoint < 0) {
+						this.config.fadePoint = 0;
 					}
-					var startingPoint = self.items.length * self.config.fadePoint;
-					var steps = self.items.length - startingPoint;
+					var startingPoint = this.items.length * this.config.fadePoint;
+					var steps = this.items.length - startingPoint;
 					if (i >= startingPoint) {
 						var currentStep = i - startingPoint;
 						tr.style.opacity = 1 - (1 / steps * currentStep);

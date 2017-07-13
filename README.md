@@ -3,13 +3,12 @@
 
 ![Simple](images/image.png)
 
-Current version is 1.0.0 
+Current version is 1.0.1 
 See [changelog](CHANGELOG.md "Version history") for version history.
 
 ## Prerequisites
 - The user have downloaded StorH (iOS, Android).
 - The user have created a SkogID
-- The user have created a StorH group.
 
 ## Installation
 

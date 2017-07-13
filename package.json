@@ -1,6 +1,6 @@
 {
   "name": "mmm-storh",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The 'MMM-StorH' module is for displaying the StorH shopping list ",
   "main": "MMM-StorH.js",
   "scripts": {
