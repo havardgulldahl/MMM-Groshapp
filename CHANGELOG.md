@@ -1,10 +1,6 @@
-#MMM-StorH Change Log
-
-## [1.0.1] - 2017-07-14
-
-- Initial version
+#MMM-Groshapp Change Log
 
 
-## [1.0.0] - 2017-07-01
+## [0.0.1] - 2020-04-26
 
-- Initial version
+- Initial version, based upon MMM-StorH

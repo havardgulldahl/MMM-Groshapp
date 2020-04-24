@@ -1,14 +1,17 @@
-# MagicMirror² Module: StorH
-'MMM-StorH' is a module for displaying your shopping list using StorH by Skog Dev [MagicMirror²](https://magicmirror.builders/). 
+# MagicMirror² Module: Groshapp
+'MMM-Groshapp' is a module for displaying your shopping list using Grosh [MagicMirror²](https://magicmirror.builders/). 
 
 ![Simple](images/image.png)
 
-Current version is 1.0.1 
+Current version is 0.0.1 
 See [changelog](CHANGELOG.md "Version history") for version history.
 
+## Credit where it is due
+The code in is app is based on MMM-SkogH 1.0.1 by Skog Dev, great stuff!
+
 ## Prerequisites
-- The user have downloaded StorH (iOS, Android).
-- The user have created a SkogID
+- The user have downloaded Grosh (iOS, Android).
+- The user have created a Grosh app user
 
 ## Installation
 
@@ -19,12 +22,12 @@ cd ~/MagicMirror/modules
 
 Clone the repository:
 ````bash
-git clone https://github.com/SkogDev/MMM-StorH.git
+git clone https://github.com/havardgulldahl/MMM-Groshapp.git
 ````
 
 Go to the modules folder:
 ````bash
-cd MMM-StorH
+cd MMM-Groshapp
 ````
 
 Install the dependencies:
@@ -35,8 +38,8 @@ npm install
 Add the module to the modules array in the `config/config.js` file by adding the following section. You may change this configuration later:
 ```
 {
-	module: 'mmm-storh',
-	header: 'StorH',
+	module: 'mmm-groshapp',
+	header: 'Grosh',
 	position: 'top_left',
 	config: {
 		showHeader: true,

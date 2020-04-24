@@ -1,12 +1,12 @@
 {
-  "name": "mmm-storh",
-  "version": "1.0.1",
-  "description": "The 'MMM-StorH' module is for displaying the StorH shopping list ",
-  "main": "MMM-StorH.js",
+  "name": "mmm-groshapp",
+  "version": "0.0.1",
+  "description": "The 'MMM-Groshapp' module is for displaying Grosh shopping lists ",
+  "main": "MMM-Groshapp.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Petter Skog",
+  "author": "Håvard Gulldahl",
   "license": "MIT",
   "devDependencies": {
   },

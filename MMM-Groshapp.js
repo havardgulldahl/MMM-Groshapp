@@ -1,10 +1,13 @@
 /* Magic Mirror
- * Module: StorH
+ * Module: Groshapp
+
+
  *
- * By Petter Skog (https://skogdev.no)
+ * By Håvard Gulldahl (havard@gulldahl.no)
+ * Based upon work by Petter Skog (https://skogdev.no)
  * MIT Licensed.
  */
-var baseUrl = 'https://storhapi.skogdev.no/v1/';
+var baseUrl = 'https://groshapp.com/edge'
 var accessToken = null;
 var groupId = null;
 
@@ -93,14 +96,14 @@ var tran = {
 	LOADING: ''
 }
 
-Module.register('MMM-StorH', {
+Module.register('MMM-Groshapp', {
 	
 	defaults: {				
 		showHeader: true, 							
 		maxItems: 10,
 	},
 	getStyles: () => {
-		return ["storh.css"];
+		return ["groshapp.css"];
 	},
 
 	getTranslations: () => {
@@ -190,7 +193,7 @@ Module.register('MMM-StorH', {
 		if (this.items.length > 0) {
 
 			var table = document.createElement('table');
-			table.className = 'storh small';
+			table.className = 'groshapp small';
 
 			if (this.config.showHeader) {
 				table.appendChild(this.getTableHeaderRow());

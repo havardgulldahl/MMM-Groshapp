@@ -1,12 +1,12 @@
-/* MMM-StorH styling */
+/* MMM-groshapp styling */
 
-table.storh { width: 100%; border: 1px;}
+table.groshapp { width: 100%; border: 1px;}
 
-.storh .manu {
+.groshapp .manu {
 	padding-right: 5px;
 }
 
-.storh .title {
+.groshapp .title {
   padding-left: 0;
   padding-right: 0;
 }
