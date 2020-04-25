@@ -11,54 +11,6 @@ var baseUrl = 'https://groshapp.com/edge'
 var accessToken = null;
 var groupId = null;
 
-var performHttp = function(requestUrl) {
-	return new Promise((resolve, reject) => {
-		var hr = new XMLHttpRequest();
-		hr.onreadystatechange = () => {
-
-			// Success --> resolve
-			if (hr.readyState == 4 && hr.status == 200) {
-				resolve(hr.responseText);
-			}
-			// Token expired --> reauthenticate
-			else if (hr.readyState == 4 && hr.status === 401) {
-				authenticate()
-					.then((result) => {
-						if (result)
-							resolve(result);
-						else
-							reject('unable to authenticate');
-					})
-			}
-		}
-
-		hr.open('GET', requestUrl, true);
-		hr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-		hr.send(null);
-	})
-}
-
-var authenticate = function(config) {
-	return new Promise((resolve) => {
-		var hr = new XMLHttpRequest();
-		hr.open('POST', baseUrl + 'auth/login', true);
-		hr.setRequestHeader('Content-Type', 'application/json');
-		hr.onreadystatechange = function () {
-			if (hr.readyState == 4 && hr.status == 200) {
-				var result = JSON.parse(hr.responseText).result;
-				accessToken = result.accessToken;
-				resolve(true);
-			}
-			else if (hr.readyState == 4)
-				resolve(false)
-		}
-		hr.send(JSON.stringify({
-			email: config.email,
-			password: config.password
-		}));
-	})
-}
-
 var getGroup = function() {
 		var url = baseUrl + 'group/getgroups';
 		return getData(url)
@@ -73,10 +25,12 @@ var getGroup = function() {
 	}
 
 var getData = function(url) {
-	return performHttp(url)
+	let headers =  new Headers();
+	headers.append("Authorization", "Basic " + btoa(config.email + ":" +config.password));
+
+	return fetch(url, {"headers": headers})
 		.then((response) => {
-			var parsedResponse = JSON.parse(response);
-			return parsedResponse.result;
+			return response.json();
 		})
 }
 
