@@ -9,7 +9,7 @@
  */
 const baseUrl = 'https://groshapp.com/edge'
 /** @type {Array} */
-var lists = null;
+var lists = [];
 /** @type {Object} */
 var mainList = null;
 
@@ -17,12 +17,7 @@ var findMainList = function() {
 	// look through all lists for our main list
 	// TODO: add config.listname key 
 	// for now, just get the first one that has items
-	lists.forEach( function(val) {
-		if(val.size > 0) {
-			mainList = val;
-			break;
-		}
-	});
+	mainList = lists.find( (itm) => itm.size > 0 );
 }
 
 var dataFetcherFactory = function(config) {
@@ -31,7 +26,7 @@ var dataFetcherFactory = function(config) {
 
 	var fetcher = function(url) {
 		
-		fetch(url, {"headers": headers})
+		return fetch(url, {"headers": headers})
 			.then((response) => {
 				return response.json();
 		});
@@ -41,26 +36,25 @@ var dataFetcherFactory = function(config) {
 
 
 var getLists = function(fetcher) {
-		var url = baseUrl + '/users/me/households';
-		return fetcher(url)
-			.then((result) => {
-				if (result.length > 0) {
-					lists = result;
-					findMainList();
-					return;
-				}
-				else
-					throw 'User has no lists';
-			});
-	}
+	let url = baseUrl + '/users/me/households';
+	return fetcher(url)
+		.then((_lists) => {
+		if(_lists.length == 0)
+			throw 'User has no lists';
+		lists = _lists;
+		findMainList();
+		});
+}
 
 var startPolling = function(self, fetcher) {
-		var url = baseUrl + 'households/' + encodeURIComponent(list.id) + '/current';
+		var url = baseUrl + '/households/' + encodeURIComponent(mainList.id) + '/current';
 		fetcher(url)
 			.then((result) => {
-				self.items = result.slice(0, self.config.maxItems);
+				let _itms = result.flatMap(l => l.groceries);
+				self.items = _itms.slice(0, self.config.maxItems);
 				self.updateDom(0);
 			})
+
 	}
 
 var tran = {
