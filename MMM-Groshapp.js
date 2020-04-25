@@ -29,10 +29,13 @@ var dataFetcherFactory = function(config) {
 	let headers =  new Headers();
 	headers.append("Authorization", "Basic " + btoa(config.email + ":" +config.password));
 
-	var fetcher = fetch(url, {"headers": headers})
-		.then((response) => {
-			return response.json();
-		})
+	var fetcher = function(url) {
+		
+		fetch(url, {"headers": headers})
+			.then((response) => {
+				return response.json();
+		});
+	}
     return fetcher;
 }
 
