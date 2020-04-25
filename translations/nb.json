@@ -3,5 +3,7 @@
 	"STARTINGMODULE":		"Starter modul",
 	"MANUFACTURER":			"Merke",
 	"ITEMNAME":	            "Navn",
-	"COUNT":		        "Antall"
+	"COUNT":		        "Antall",
+	"PRICE":		        "Pris"
+
 }

@@ -3,5 +3,6 @@
 	"STARTINGMODULE":		"Starting module",
 	"MANUFACTURER":			"Brand",
 	"ITEMNAME":				"Name",
-	"COUNT":		        "Count"
+	"COUNT":		        "Count",
+	"PRICE":		        "Price"
 }
