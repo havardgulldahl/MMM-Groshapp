@@ -8,10 +8,6 @@
  * MIT Licensed.
  */
 const baseUrl = "https://groshapp.com/edge";
-/** @type {Array} */
-var lists = [];
-/** @type {Object} */
-var mainList = null;
 
 var dataFetcherFactory = function (config) {
   let headers = new Headers();
@@ -32,8 +28,7 @@ var getLists = function (fetcher) {
   let url = baseUrl + "/users/me/households";
   return fetcher(url).then((_lists) => {
     if (_lists.length == 0) throw "User has no lists";
-    lists = _lists;
-    return lists;
+    return _lists;
   });
 };
 
@@ -74,8 +69,7 @@ Module.register("MMM-Groshapp", {
   },
 
   start: function () {
-    Log.log("starting");
-    console.log(this);
+    /** @type {Array} */
     this.items = [];
 
     Log.info("Starting module: " + this.name);
@@ -88,6 +82,7 @@ Module.register("MMM-Groshapp", {
 
     // Set locale and time format based on global config
     Log.log("setting locale to", config.language);
+    /** @type {Object} */
     this.mainList = null;
 
     // Setup
