@@ -7,38 +7,55 @@
  * Based upon work by Petter Skog (https://skogdev.no)
  * MIT Licensed.
  */
-var baseUrl = 'https://groshapp.com/edge'
-var accessToken = null;
-var groupId = null;
+const baseUrl = 'https://groshapp.com/edge'
+/** @type {Array} */
+var lists = null;
+/** @type {Object} */
+var mainList = null;
 
-var getGroup = function() {
-		var url = baseUrl + 'group/getgroups';
-		return getData(url)
-			.then((result) => {
-				if (result.length > 0) {
-					groupId = result[0].id;
-					return;
-				}
-				else
-					throw 'User has no group';
-			});
-	}
+var findMainList = function() {
+	// look through all lists for our main list
+	// TODO: add config.listname key 
+	// for now, just get the first one that has items
+	lists.forEach( function(val) {
+		if(val.size > 0) {
+			mainList = val;
+			break;
+		}
+	});
+}
 
-var getData = function(url) {
+var dataFetcherFactory = function(config) {
 	let headers =  new Headers();
 	headers.append("Authorization", "Basic " + btoa(config.email + ":" +config.password));
 
-	return fetch(url, {"headers": headers})
+	var fetcher = fetch(url, {"headers": headers})
 		.then((response) => {
 			return response.json();
 		})
+    return fetcher;
 }
 
-var startPolling = function(self) {
-		var url = baseUrl + 'item/getitemsingroup?groupId=' + groupId + '&isShoppingList=true'
-		getData(url)
+
+var getLists = function(fetcher) {
+		var url = baseUrl + '/users/me/households';
+		return fetcher(url)
 			.then((result) => {
-				self.items = result.slice(0, this.config.maxItems);
+				if (result.length > 0) {
+					lists = result;
+					findMainList();
+					return;
+				}
+				else
+					throw 'User has no lists';
+			});
+	}
+
+var startPolling = function(self, fetcher) {
+		var url = baseUrl + 'households/' + encodeURIComponent(list.id) + '/current';
+		fetcher(url)
+			.then((result) => {
+				self.items = result.slice(0, self.config.maxItems);
 				self.updateDom(0);
 			})
 	}
@@ -84,12 +101,12 @@ Module.register('MMM-Groshapp', {
 		Log.log('setting locale to', config.language);
 
 		// Setup
-		authenticate(this.config)
-			.then(() => getGroup())
-			.then(() => startPolling(this))
+		let getData = dataFetcherFactory(this.config);
+		getLists(getData)
+			.then(() => startPolling(this, getData))
 			.then(() => {
 				setInterval(() => {
-					startPolling(this);
+					startPolling(this, getData);
 				}, 60000);
 			})
 			.catch((err) => {
@@ -124,22 +141,22 @@ Module.register('MMM-Groshapp', {
 	getTableRow: function(item) {
 		var tdItemManu = document.createElement('td');
 		tdItemManu.className = 'manu';
-		var txtLine = document.createTextNode(item.itemManu);
+		var txtLine = document.createTextNode(item.price);
 		tdItemManu.appendChild(txtLine);
 
 		var tdItemName = document.createElement('td');
 		tdItemName.className = 'itemname bright';
-		tdItemName.appendChild(document.createTextNode(item.itemName));
+		tdItemName.appendChild(document.createTextNode(item.name));
 
 
 		var tdCount = document.createElement('td');
 		tdCount.className = 'count center';
-		tdCount.appendChild(document.createTextNode(item.count));
+		tdCount.appendChild(document.createTextNode(item.amount));
 
 		var tr = document.createElement('tr');
-		tr.appendChild(tdItemManu);
 		tr.appendChild(tdItemName);
 		tr.appendChild(tdCount);
+		tr.appendChild(tdItemManu);
 
 		return tr;
 	},
