@@ -39,7 +39,10 @@ var getLists = function (fetcher) {
 
 var startPolling = function (self, fetcher) {
   var url =
-    baseUrl + "/households/" + encodeURIComponent(mainList.id) + "/current";
+    baseUrl +
+    "/households/" +
+    encodeURIComponent(self.mainList.id) +
+    "/current";
   fetcher(url).then((result) => {
     let _itms = result.flatMap((l) => l.groceries);
     self.items = _itms.slice(0, self.config.maxItems);
@@ -84,21 +87,23 @@ Module.register("MMM-Groshapp", {
     tran.LOADING = this.translate("LOADING");
 
     // Set locale and time format based on global config
-	Log.log("setting locale to", config.language);
-	this.mainList = null;
+    Log.log("setting locale to", config.language);
+    this.mainList = null;
 
     // Setup
     let getData = dataFetcherFactory(this.config);
-	getLists(getData)
-	  .then( (lists) => {
-		  	if(this.config.shoppinglist !== undefined) {
-				  this.mainList = lists.find((itm) => itm.name == this.config.shoppinglist);
-			} else {
-				//get first list that has non-zero items
-				this.mainList = lists.find((itm) => itm.size > 0);
-			}
-			return true;
-	  })
+    getLists(getData)
+      .then((lists) => {
+        if (this.config.shoppinglist !== undefined) {
+          this.mainList = lists.find(
+            (itm) => itm.name == this.config.shoppinglist
+          );
+        } else {
+          //get first list that has non-zero items
+          this.mainList = lists.find((itm) => itm.size > 0);
+        }
+        return true;
+      })
       .then(() => startPolling(this, getData))
       .then(() => {
         setInterval(() => {
@@ -113,10 +118,6 @@ Module.register("MMM-Groshapp", {
     self.updateDom(this.config.animationSpeed);
   },
   getTableHeaderRow: function () {
-    var thBrand = document.createElement("th");
-    thBrand.className = "light";
-    thBrand.appendChild(document.createTextNode(tran.MANUFACTURER));
-
     var thItemName = document.createElement("th");
     thItemName.className = "light";
     thItemName.appendChild(document.createTextNode(tran.ITEMNAME));
@@ -125,33 +126,38 @@ Module.register("MMM-Groshapp", {
     thCount.className = "light";
     thCount.appendChild(document.createTextNode(tran.COUNT));
 
+    var thPrice = document.createElement("th");
+    thPrice.className = "light";
+    thPrice.appendChild(document.createTextNode(tran.PRICE));
+
     var thead = document.createElement("thead");
     thead.addClass = "xsmall dimmed";
-    thead.appendChild(thBrand);
     thead.appendChild(thItemName);
     thead.appendChild(thCount);
+    // disable until we figure out how to format it
+    //thead.appendChild(thPrice);
 
     return thead;
   },
 
   getTableRow: function (item) {
-    var tdItemManu = document.createElement("td");
-    tdItemManu.className = "manu";
-    var txtLine = document.createTextNode(item.price);
-    tdItemManu.appendChild(txtLine);
-
     var tdItemName = document.createElement("td");
     tdItemName.className = "itemname bright";
     tdItemName.appendChild(document.createTextNode(item.name));
 
     var tdCount = document.createElement("td");
-    tdCount.className = "count center";
+    tdCount.className = "count";
     tdCount.appendChild(document.createTextNode(item.amount));
+
+    var tdItemPrice = document.createElement("td");
+    var txtLine = document.createTextNode(item.price);
+    tdItemPrice.appendChild(txtLine);
 
     var tr = document.createElement("tr");
     tr.appendChild(tdItemName);
     tr.appendChild(tdCount);
-    tr.appendChild(tdItemManu);
+    // disable until we figure out how to format it
+    //tr.appendChild(tdItemPrice);
 
     return tr;
   },

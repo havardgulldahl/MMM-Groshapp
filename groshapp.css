@@ -1,9 +1,12 @@
 /* MMM-groshapp styling */
 
-table.groshapp { width: 100%; border: 1px;}
+table.groshapp {
+  width: 100%;
+  border: 1px;
+}
 
 .groshapp .manu {
-	padding-right: 5px;
+  padding-right: 5px;
 }
 
 .groshapp .title {
@@ -11,6 +14,6 @@ table.groshapp { width: 100%; border: 1px;}
   padding-right: 0;
 }
 
-.center {
-  text-align: center;
+.groshapp .count::before {
+  content: "⨉";
 }
