@@ -103,7 +103,7 @@ Module.register("MMM-Groshapp", {
       .then(() => {
         setInterval(() => {
           startPolling(this, getData);
-        }, 60000);
+        }, 1000 * 60 * 60 * 3);
       })
       .catch((err) => {
         throw new Error(err);
